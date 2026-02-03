@@ -2,100 +2,60 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pour Miss Plantard</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌷</text></svg>">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Bad+Script&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-pink: #c9184a;
-            --light-pink: #ff4d6d;
-            --beige-bg: #fdf5e6;
-            --glass-bg-oui: rgba(255, 77, 109, 0.6);
-            --glass-bg-non: rgba(255, 255, 255, 0.3);
-            --shadow-color: rgba(0, 0, 0, 0.2);
+            --anthracite: #333333;
+            --glass-oui: rgba(255, 77, 109, 0.4);
+            --glass-non: rgba(255, 255, 255, 0.3);
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            width: 100vw;
-            background: radial-gradient(circle at center, var(--beige-bg) 0%, #f5ebd7 100%);
-            font-family: 'Montserrat', sans-serif;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #fdf5e6;
+            font-family: 'Poiret One', cursive;
             overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            touch-action: none;
         }
 
         h1 {
-            font-family: 'Bad Script', cursive;
-            font-size: clamp(2rem, 8vw, 4.5rem); /* Taille responsive */
-            color: var(--primary-pink);
-            text-align: center;
-            margin-top: 10vh;
-            padding: 0 5vw; /* Padding responsive */
-            z-index: 5;
+            position: absolute; width: 100%; top: 10%;
+            text-align: center; color: var(--anthracite);
+            font-size: clamp(1.8rem, 6vw, 3.5rem);
+            z-index: 10; padding: 0 15px; box-sizing: border-box;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
             pointer-events: none;
-            line-height: 1.4;
-            text-shadow: 3px 3px 6px var(--shadow-color); /* Ombre portée */
         }
 
         .btn {
             position: absolute;
-            padding: clamp(15px, 4vw, 25px) clamp(40px, 8vw, 60px); /* Padding responsive */
-            font-size: clamp(1.2rem, 3.5vw, 1.8rem); /* Taille de texte responsive */
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 30px;
-            cursor: pointer;
+            padding: 15px 35px;
+            border-radius: 50px; /* Arrondi total */
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-family: 'Poiret One', cursive;
             font-weight: bold;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px 0 var(--shadow-color); /* Ombre portée */
-            transition: transform 0.3s ease, background-color 0.3s;
-            z-index: 100;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            user-select: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        #btn-oui {
-            background: var(--glass-bg-oui);
-            color: white;
-            left: 20%; /* Position initiale responsive */
-            top: 40%;
-        }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes popOut { to { transform: scale(0); opacity: 0; } }
 
-        #btn-oui:hover { 
-            transform: scale(1.4); 
-            background: var(--light-pink); /* Un peu moins transparent au survol */
-        }
-
-        #btn-non {
-            background: var(--glass-bg-non);
-            color: var(--primary-pink);
-            left: 60%; /* Position initiale responsive */
-            top: 55%;
-        }
-
-        #btn-non:hover { transform: scale(0.6); }
+        .btn-oui { background: var(--glass-oui); color: white; z-index: 100; }
+        .btn-non { background: var(--glass-non); color: var(--anthracite); z-index: 90; }
 
         .emoji {
-            position: absolute;
-            top: -100px;
-            font-size: clamp(2rem, 6vw, 3rem); /* Taille d'emoji responsive */
-            z-index: 1000;
-            user-select: none;
-            pointer-events: none;
-            opacity: 0; /* Commence invisible */
-            animation-fill-mode: forwards; /* Maintient le dernier état de l'animation */
-        }
-
-        @keyframes fallWithWind {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(110vh) translateX(var(--wind-offset)) rotate(720deg); opacity: 0; }
+            position: absolute; pointer-events: none; z-index: 1000;
+            will-change: transform;
         }
     </style>
 </head>
@@ -103,90 +63,101 @@
 
     <h1 id="main-title">Miss Plantard, <br>Voulez-Vous Me faire L'Honneur D'Etre Ma Valentine ?</h1>
 
-    <button class="btn" id="btn-oui" onclick="celebrate()">Oui</button>
-    <button class="btn" id="btn-non">Non</button>
-
     <script>
-        // --- MOUVEMENT ALÉATOIRE (MODE BALLONS AU VENT) ---
-        function applyFloatingMovement(id) {
-            const el = document.getElementById(id);
-            let posX = el.offsetLeft;
-            let posY = el.offsetTop;
-            let angle = Math.random() * Math.PI * 2;
-            let speed = 0.5 + Math.random() * 1.5; // Vitesse variable
-
-            function update() {
-                // Ajustement de la vitesse et de l'angle pour plus de variété
-                angle += (Math.random() - 0.5) * 0.1; // Léger changement d'angle
-                speed = 0.8 + Math.sin(Date.now() * 0.001) * 0.5; // Vitesse sinusoïdale pour un effet de "respiration"
-
-                posX += Math.cos(angle) * speed;
-                posY += Math.sin(angle) * speed;
-
-                const winW = window.innerWidth;
-                const winH = window.innerHeight;
-                const elW = el.offsetWidth;
-                const elH = el.offsetHeight;
-
-                // Rebond sur les bords avec une marge
-                if (posX < 0 || posX > winW - elW) {
-                    dx = -dx; // Inverser la direction X
-                    posX = Math.max(0, Math.min(posX, winW - elW)); // Corriger la position si hors limite
-                }
-                if (posY < 0 || posY > winH - elH) {
-                    dy = -dy; // Inverser la direction Y
-                    posY = Math.max(0, Math.min(posY, winH - elH)); // Corriger la position
-                }
-
-
-                // Empêcher les boutons de sortir trop des bords
-                posX = Math.max(0, Math.min(posX, winW - elW));
-                posY = Math.max(0, Math.min(posY, winH - elH));
-
-                el.style.left = posX + 'px';
-                el.style.top = posY + 'px';
-                
-                requestAnimationFrame(update);
-            }
-            update();
-        }
-
-        window.onload = () => {
-            applyFloatingMovement('btn-oui');
-            applyFloatingMovement('btn-non');
+        const btns = [];
+        const config = {
+            numOui: 3,
+            numNon: 5,
+            emojiCount: 300
         };
 
-        // --- CÉLÉBRATION (PLUIE MASSIVE + VENT) ---
+        class Button {
+            constructor(text, className, isOui) {
+                this.el = document.createElement('button');
+                this.el.innerText = text;
+                this.el.className = `btn ${className}`;
+                this.isOui = isOui;
+                document.body.appendChild(this.el);
+
+                this.rect = this.el.getBoundingClientRect();
+                this.x = Math.random() * (window.innerWidth - 120);
+                this.y = Math.random() * (window.innerHeight - 60);
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.w = this.el.offsetWidth;
+                this.h = this.el.offsetHeight;
+
+                this.el.onclick = () => isOui ? celebrate() : this.pop();
+            }
+
+            pop() {
+                this.el.style.animation = "popOut 0.3s forwards";
+                setTimeout(() => {
+                    this.x = Math.random() * (window.innerWidth - 120);
+                    this.y = Math.random() * (window.innerHeight - 60);
+                    this.el.style.animation = "popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+                }, 1000);
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Rebond bords
+                if (this.x <= 0 || this.x + this.w >= window.innerWidth) this.vx *= -1;
+                if (this.y <= 0 || this.y + this.h >= window.innerHeight) this.vy *= -1;
+
+                // Collision entre boutons
+                btns.forEach(other => {
+                    if (other === this) return;
+                    const dx = (this.x + this.w/2) - (other.x + other.w/2);
+                    const dy = (this.y + this.h/2) - (other.y + other.h/2);
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < this.w/1.5) {
+                        this.vx = dx * 0.05;
+                        this.vy = dy * 0.05;
+                    }
+                });
+
+                this.el.style.transform = `translate(${this.x}px, ${this.y}px)`;
+            }
+        }
+
+        // Initialisation
+        for(let i=0; i<config.numOui; i++) btns.push(new Button('Oui', 'btn-oui', true));
+        for(let i=0; i<config.numNon; i++) btns.push(new Button('Non', 'btn-non', false));
+
+        function animate() {
+            btns.forEach(b => b.update());
+            requestAnimationFrame(animate);
+        }
+        animate();
+
         function celebrate() {
-            const title = document.getElementById('main-title');
-            title.innerHTML = "Je savais que tu dirais oui ! ❤️";
-            title.style.fontSize = "clamp(3rem, 10vw, 6rem)"; // Taille plus grande au clic
+            document.getElementById('main-title').innerText = "Je savais que tu dirais oui !";
+            btns.forEach(b => b.el.style.display = 'none');
 
-            document.getElementById('btn-oui').style.display = 'none';
-            document.getElementById('btn-non').style.display = 'none';
-
-            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️', '🦋', '💐', '🍓', '🥂', '🎉'];
-            
-            // On crée 250 emojis pour un effet vraiment immersif
-            for (let i = 0; i < 250; i++) {
+            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️'];
+            for (let i = 0; i < config.emojiCount; i++) {
                 setTimeout(() => {
                     const e = document.createElement('div');
                     e.className = 'emoji';
-                    e.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-                    
+                    e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
                     e.style.left = Math.random() * 100 + 'vw';
-                    e.style.fontSize = `${Math.random() * 1.5 + 1}rem`; // Taille aléatoire
-
-                    const duration = 4 + Math.random() * 6; // Durée plus longue et aléatoire
-                    const delay = Math.random() * 3; // Délai de départ aléatoire
-                    const windOffset = (Math.random() - 0.5) * 100; // Décalage latéral (vent)
-
-                    e.style.setProperty('--wind-offset', `${windOffset}px`); // Variable CSS pour le vent
-                    e.style.animation = `fallWithWind ${duration}s ease-out ${delay}s forwards`;
+                    e.style.fontSize = (Math.random() * 20 + 20) + 'px';
                     
+                    const duration = 3000 + Math.random() * 3000;
+                    const startX = Math.random() * window.innerWidth;
+                    
+                    const animation = e.animate([
+                        { transform: `translate(0, -10vh) rotate(0deg)`, opacity: 1 },
+                        { transform: `translate(${Math.sin(i)*100}px, 50vh) rotate(180deg)`, opacity: 0.8 },
+                        { transform: `translate(${Math.cos(i)*150}px, 110vh) rotate(360deg)`, opacity: 0 }
+                    ], { duration: duration, easing: 'cubic-bezier(.37,0,.63,1)' });
+
                     document.body.appendChild(e);
-                    setTimeout(() => e.remove(), (duration + delay) * 1000 + 500); // Supprime après animation
-                }, i * 30); // Espace les créations pour ne pas surcharger
+                    animation.onfinish = () => e.remove();
+                }, i * 20);
             }
         }
     </script>
