@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Miss Plantard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffd1dc 100%);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive; /* Style Harmony moderne */
+            font-size: 3.5rem;
+            color: #c9184a;
+            margin-bottom: 50px;
+            padding: 0 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .container-buttons {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-weight: bold;
+        }
+
+        #btn-oui {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
+        }
+
+        #btn-oui:hover {
+            transform: scale(1.3); /* Grossit au survol */
+        }
+
+        #btn-non {
+            background-color: white;
+            color: #ff4d6d;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        #btn-non:hover {
+            transform: scale(0.7); /* Diminue au survol */
+        }
+
+        /* Animation des fleurs et cœurs */
+        .emoji {
+            position: absolute;
+            top: -50px;
+            font-size: 2rem;
+            animation: fall linear forwards;
+            z-index: 10;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="main-title">Miss Plantard, <br>Voulez-Vous Me faire L'Honneur D'Etre Ma Valentine ?</h1>
+
+    <div class="container-buttons" id="actions">
+        <button class="btn" id="btn-oui" onclick="celebrate()">Oui</button>
+        <button class="btn" id="btn-non">Non</button>
+    </div>
+
+    <script>
+        // Effet de pluie au clic sur "Oui"
+        function celebrate() {
+            const title = document.getElementById('main-title');
+            title.innerHTML = "Je savais que tu dirais oui ! ❤️";
+            document.getElementById('actions').style.display = 'none';
+
+            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const emoji = document.createElement('div');
+                    emoji.className = 'emoji';
+                    emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                    emoji.style.left = Math.random() * 100 + 'vw';
+                    emoji.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    emoji.style.opacity = Math.random();
+                    document.body.appendChild(emoji);
+
+                    // Nettoyage
+                    setTimeout(() => emoji.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        // Petit bonus : Le bouton "Non" s'enfuit si elle essaie de cliquer (optionnel, mais drôle)
+        const btnNon = document.getElementById('btn-non');
+        btnNon.addEventListener('mouseover', () => {
+            // Ici, il diminue déjà via le CSS, mais on pourrait le déplacer.
+        });
+    </script>
+</body>
+</html>
