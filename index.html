@@ -5,29 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pour Miss Plantard</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@600&display=swap" rel="stylesheet">
-    
     <style>
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
             width: 100vw;
-            background-color: #fdf5e6; /* Fond Beige */
+            background-color: #fdf5e6; /* Beige */
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden; /* Empêche le défilement pendant que les boutons bougent */
+            overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
             font-family: 'Great Vibes', cursive;
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
             color: #c9184a;
             text-align: center;
             margin-top: 10vh;
             padding: 0 20px;
             z-index: 10;
-            position: relative;
-            pointer-events: none; /* Pour ne pas gêner le clic sur les boutons */
+            pointer-events: none;
         }
 
         .btn {
@@ -39,36 +40,29 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 5px 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease;
+            transition: transform 0.2s;
             z-index: 100;
         }
 
         #btn-oui {
             background-color: #ff4d6d;
             color: white;
-            /* Position initiale */
-            left: 20%;
             top: 50%;
+            left: 25%;
         }
 
-        #btn-oui:hover {
-            transform: scale(1.3); /* Grossit au survol */
-        }
+        #btn-oui:hover { transform: scale(1.3); }
 
         #btn-non {
             background-color: white;
             color: #ff4d6d;
             border: 2px solid #ff4d6d;
-            /* Position initiale */
-            left: 60%;
             top: 60%;
+            left: 65%;
         }
 
-        #btn-non:hover {
-            transform: scale(0.7); /* Rétrécit au survol */
-        }
+        #btn-non:hover { transform: scale(0.7); }
 
-        /* Animation des emojis qui tombent */
         .emoji {
             position: absolute;
             top: -50px;
@@ -78,9 +72,7 @@
         }
 
         @keyframes fall {
-            to {
-                transform: translateY(110vh) rotate(360deg);
-            }
+            to { transform: translateY(110vh) rotate(360deg); }
         }
     </style>
 </head>
@@ -92,50 +84,34 @@
     <button class="btn" id="btn-non">Non</button>
 
     <script>
-        // --- LOGIQUE DES BOUTONS BALLONS ---
-        function setupBallon(id, speedX, speedY) {
-            const btn = document.getElementById(id);
-            let x = btn.offsetLeft;
-            let y = btn.offsetTop;
-            let dx = speedX;
-            let dy = speedY;
-
+        // Animation des boutons qui flottent
+        function animateBallon(id, sx, sy) {
+            const el = document.getElementById(id);
+            let x = el.offsetLeft, y = el.offsetTop, dx = sx, dy = sy;
             function move() {
-                const maxX = window.innerWidth - btn.offsetWidth;
-                const maxY = window.innerHeight - btn.offsetHeight;
-
-                if (x + dx > maxX || x + dx < 0) dx = -dx;
-                if (y + dy > maxY || y + dy < 0) dy = -dy;
-
-                x += dx;
-                y += dy;
-
-                btn.style.left = x + 'px';
-                btn.style.top = y + 'px';
-
+                const mw = window.innerWidth - el.offsetWidth;
+                const mh = window.innerHeight - el.offsetHeight;
+                if (x + dx > mw || x + dx < 0) dx = -dx;
+                if (y + dy > mh || y + dy < 0) dy = -dy;
+                x += dx; y += dy;
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
                 requestAnimationFrame(move);
             }
             move();
         }
 
-        // On lance l'animation une fois la page chargée
         window.onload = () => {
-            setupBallon('btn-oui', 1.5, 1);
-            setupBallon('btn-non', -1.2, -1.8);
+            animateBallon('btn-oui', 1.5, 1);
+            animateBallon('btn-non', -1.2, -1.8);
         };
 
-        // --- LOGIQUE DU CLIC SUR OUI ---
         function celebrate() {
             const title = document.getElementById('main-title');
             title.innerHTML = "Je savais que tu dirais oui ! ❤️";
-            
-            // On fait disparaître les boutons
             document.getElementById('btn-oui').style.display = 'none';
             document.getElementById('btn-non').style.display = 'none';
-
-            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️', '🥰'];
-            
-            // Création de la pluie d'emojis
+            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️'];
             for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     const e = document.createElement('div');
@@ -143,15 +119,11 @@
                     e.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
                     e.style.left = Math.random() * 100 + 'vw';
                     e.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    e.style.opacity = Math.random();
                     document.body.appendChild(e);
-
-                    // Supprimer l'élément après l'animation
                     setTimeout(() => e.remove(), 5000);
                 }, i * 60);
             }
         }
     </script>
-
 </body>
 </html>
