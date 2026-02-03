@@ -4,14 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pour Miss Plantard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌷</text></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bad+Script&family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-pink: #c9184a;
+            --light-pink: #ff4d6d;
+            --beige-bg: #fdf5e6;
+            --glass-bg-oui: rgba(255, 77, 109, 0.6);
+            --glass-bg-non: rgba(255, 255, 255, 0.3);
+            --shadow-color: rgba(0, 0, 0, 0.2);
+        }
+
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
             width: 100vw;
-            background-color: #fdf5e6; /* Beige */
+            background: radial-gradient(circle at center, var(--beige-bg) 0%, #f5ebd7 100%);
             font-family: 'Montserrat', sans-serif;
             overflow: hidden;
             position: relative;
@@ -21,58 +32,70 @@
         }
 
         h1 {
-            font-family: 'Great Vibes', cursive;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            color: #c9184a;
+            font-family: 'Bad Script', cursive;
+            font-size: clamp(2rem, 8vw, 4.5rem); /* Taille responsive */
+            color: var(--primary-pink);
             text-align: center;
             margin-top: 10vh;
-            padding: 0 20px;
-            z-index: 10;
+            padding: 0 5vw; /* Padding responsive */
+            z-index: 5;
             pointer-events: none;
+            line-height: 1.4;
+            text-shadow: 3px 3px 6px var(--shadow-color); /* Ombre portée */
         }
 
         .btn {
             position: absolute;
-            padding: 20px 45px;
-            font-size: 1.5rem;
-            border: none;
-            border-radius: 50px;
+            padding: clamp(15px, 4vw, 25px) clamp(40px, 8vw, 60px); /* Padding responsive */
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem); /* Taille de texte responsive */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 5px 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.2s;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px 0 var(--shadow-color); /* Ombre portée */
+            transition: transform 0.3s ease, background-color 0.3s;
             z-index: 100;
         }
 
         #btn-oui {
-            background-color: #ff4d6d;
+            background: var(--glass-bg-oui);
             color: white;
-            top: 50%;
-            left: 25%;
+            left: 20%; /* Position initiale responsive */
+            top: 40%;
         }
 
-        #btn-oui:hover { transform: scale(1.3); }
+        #btn-oui:hover { 
+            transform: scale(1.4); 
+            background: var(--light-pink); /* Un peu moins transparent au survol */
+        }
 
         #btn-non {
-            background-color: white;
-            color: #ff4d6d;
-            border: 2px solid #ff4d6d;
-            top: 60%;
-            left: 65%;
+            background: var(--glass-bg-non);
+            color: var(--primary-pink);
+            left: 60%; /* Position initiale responsive */
+            top: 55%;
         }
 
-        #btn-non:hover { transform: scale(0.7); }
+        #btn-non:hover { transform: scale(0.6); }
 
         .emoji {
             position: absolute;
-            top: -50px;
-            font-size: 2.5rem;
-            animation: fall linear forwards;
+            top: -100px;
+            font-size: clamp(2rem, 6vw, 3rem); /* Taille d'emoji responsive */
             z-index: 1000;
+            user-select: none;
+            pointer-events: none;
+            opacity: 0; /* Commence invisible */
+            animation-fill-mode: forwards; /* Maintient le dernier état de l'animation */
         }
 
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
+        @keyframes fallWithWind {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh) translateX(var(--wind-offset)) rotate(720deg); opacity: 0; }
         }
     </style>
 </head>
@@ -84,44 +107,86 @@
     <button class="btn" id="btn-non">Non</button>
 
     <script>
-        // Animation des boutons qui flottent
-        function animateBallon(id, sx, sy) {
+        // --- MOUVEMENT ALÉATOIRE (MODE BALLONS AU VENT) ---
+        function applyFloatingMovement(id) {
             const el = document.getElementById(id);
-            let x = el.offsetLeft, y = el.offsetTop, dx = sx, dy = sy;
-            function move() {
-                const mw = window.innerWidth - el.offsetWidth;
-                const mh = window.innerHeight - el.offsetHeight;
-                if (x + dx > mw || x + dx < 0) dx = -dx;
-                if (y + dy > mh || y + dy < 0) dy = -dy;
-                x += dx; y += dy;
-                el.style.left = x + 'px';
-                el.style.top = y + 'px';
-                requestAnimationFrame(move);
+            let posX = el.offsetLeft;
+            let posY = el.offsetTop;
+            let angle = Math.random() * Math.PI * 2;
+            let speed = 0.5 + Math.random() * 1.5; // Vitesse variable
+
+            function update() {
+                // Ajustement de la vitesse et de l'angle pour plus de variété
+                angle += (Math.random() - 0.5) * 0.1; // Léger changement d'angle
+                speed = 0.8 + Math.sin(Date.now() * 0.001) * 0.5; // Vitesse sinusoïdale pour un effet de "respiration"
+
+                posX += Math.cos(angle) * speed;
+                posY += Math.sin(angle) * speed;
+
+                const winW = window.innerWidth;
+                const winH = window.innerHeight;
+                const elW = el.offsetWidth;
+                const elH = el.offsetHeight;
+
+                // Rebond sur les bords avec une marge
+                if (posX < 0 || posX > winW - elW) {
+                    dx = -dx; // Inverser la direction X
+                    posX = Math.max(0, Math.min(posX, winW - elW)); // Corriger la position si hors limite
+                }
+                if (posY < 0 || posY > winH - elH) {
+                    dy = -dy; // Inverser la direction Y
+                    posY = Math.max(0, Math.min(posY, winH - elH)); // Corriger la position
+                }
+
+
+                // Empêcher les boutons de sortir trop des bords
+                posX = Math.max(0, Math.min(posX, winW - elW));
+                posY = Math.max(0, Math.min(posY, winH - elH));
+
+                el.style.left = posX + 'px';
+                el.style.top = posY + 'px';
+                
+                requestAnimationFrame(update);
             }
-            move();
+            update();
         }
 
         window.onload = () => {
-            animateBallon('btn-oui', 1.5, 1);
-            animateBallon('btn-non', -1.2, -1.8);
+            applyFloatingMovement('btn-oui');
+            applyFloatingMovement('btn-non');
         };
 
+        // --- CÉLÉBRATION (PLUIE MASSIVE + VENT) ---
         function celebrate() {
             const title = document.getElementById('main-title');
             title.innerHTML = "Je savais que tu dirais oui ! ❤️";
+            title.style.fontSize = "clamp(3rem, 10vw, 6rem)"; // Taille plus grande au clic
+
             document.getElementById('btn-oui').style.display = 'none';
             document.getElementById('btn-non').style.display = 'none';
-            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️'];
-            for (let i = 0; i < 100; i++) {
+
+            const emojis = ['🌸', '💖', '🌹', '✨', '🌷', '❤️', '🦋', '💐', '🍓', '🥂', '🎉'];
+            
+            // On crée 250 emojis pour un effet vraiment immersif
+            for (let i = 0; i < 250; i++) {
                 setTimeout(() => {
                     const e = document.createElement('div');
                     e.className = 'emoji';
                     e.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                    
                     e.style.left = Math.random() * 100 + 'vw';
-                    e.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    e.style.fontSize = `${Math.random() * 1.5 + 1}rem`; // Taille aléatoire
+
+                    const duration = 4 + Math.random() * 6; // Durée plus longue et aléatoire
+                    const delay = Math.random() * 3; // Délai de départ aléatoire
+                    const windOffset = (Math.random() - 0.5) * 100; // Décalage latéral (vent)
+
+                    e.style.setProperty('--wind-offset', `${windOffset}px`); // Variable CSS pour le vent
+                    e.style.animation = `fallWithWind ${duration}s ease-out ${delay}s forwards`;
+                    
                     document.body.appendChild(e);
-                    setTimeout(() => e.remove(), 5000);
-                }, i * 60);
+                    setTimeout(() => e.remove(), (duration + delay) * 1000 + 500); // Supprime après animation
+                }, i * 30); // Espace les créations pour ne pas surcharger
             }
         }
     </script>
